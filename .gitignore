@@ -1,0 +1,10 @@
+env/
+env-louvor/
+.env
+.flaskenv
+
+*.db
+show_dbs.py
+__pycache__/
+
+*.json

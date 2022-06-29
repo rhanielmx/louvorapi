@@ -4,6 +4,7 @@ env-louvor/
 .flaskenv
 
 *.db
+*.db-journal
 show_dbs.py
 __pycache__/
 

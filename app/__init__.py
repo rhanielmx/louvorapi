@@ -13,7 +13,7 @@ db = SQLAlchemy(app)
 Migrate(app,db)
 
 from app.admin.routes import admin_bp
-from app.songs.routes import songs_bp
+from app.handler.routes import handler_bp
 
 app.register_blueprint(admin_bp, url_prefix='/admin')
-app.register_blueprint(songs_bp, url_prefix='/songs')
+app.register_blueprint(handler_bp, url_prefix='/handler')

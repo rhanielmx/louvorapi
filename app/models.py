@@ -53,18 +53,16 @@ class Category(db.Model):
     __tablename__ = 'categories'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
-    description = db.Column(db.String)
     songs = db.relationship('Song', secondary=song_category, backref="categories")#backref='category', lazy=True, cascade="all, delete-orphan")
 
-    def __init__(self, name, description) -> None:
+    def __init__(self, name) -> None:
         self.name = name
-        self.description = description
 
-    def __repr__(self):
-        return f"{self.name}"
-
-    def __str__(self):
-        return f"{self.name}"
+    def json(self):
+        return {
+            'id': self.id,
+            'name': self.name
+        }
 
     def save(self):
         db.session.add(self)
@@ -73,3 +71,9 @@ class Category(db.Model):
     def delete(self):
         db.session.delete(self)
         db.session.commit()
+
+    def __repr__(self):
+        return f"{self.name}"
+
+    def __str__(self):
+        return f"{self.name}"

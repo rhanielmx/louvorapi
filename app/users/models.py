@@ -1,6 +1,7 @@
+from copyreg import pickle
 from app import db
 from datetime import datetime, timedelta
-
+import pickle
 
 class User(db.Model):
     __tablename__ = 'users'
@@ -14,10 +15,11 @@ class User(db.Model):
     last_name = db.Column(db.String(80), nullable=False)
     last_accessed = db.Column(db.DateTime)
     role = db.Column(db.String(120), nullable=False)
+    avaiability = db.Column(db.PickleType)
     avatar_url = db.Column(db.String(120), nullable=True, default='')
     songs = db.relationship('Song', backref='creator', lazy=True)
     categories = db.relationship('Category', backref='creator', lazy=True)
-    playlist = db.relationship('Playlist', backref='creator', lazy=True)
+    playlists = db.relationship('Playlist', backref='creator', lazy=True)
 
     def __init__(self, username, email, password, first_name, last_name, role):
         self.username = username
@@ -28,6 +30,7 @@ class User(db.Model):
         self.last_accessed = datetime.utcnow()-timedelta(hours=3)
         self.avatar_url = 'https://gravatar.com/avatar/8aec9a741d3d00fc127210a085df99b1?s=200&d=mp&r=x'
         self.role = role
+        self.avaiability = pickle.dumps([])
 
     def json(self):
         return {
@@ -39,20 +42,26 @@ class User(db.Model):
             'last_accessed': self.last_accessed.strftime('%d/%m/%Y %H:%M:%S'),
             'role': self.role,
             'avatar_url': self.avatar_url,
+            'availability': pickle.loads(self.avaiability),
             'songs': [song.id for song in self.songs],
-            'categories': [category.json() for category in self.categories]
+            'categories': [category.json() for category in self.categories],
+            'playlists': [playlist.json() for playlist in self.playlists]
         }
 
     def updateLastAcessed(self):
         self.last_accessed = datetime.utcnow()-timedelta(hours=3)
         db.session.commit()
 
-    def update(self, username, email, password, firstName, lastName, role):
+    def updateAvaiability(self, avaiability):
+        self.avaiability = pickle.dumps(avaiability)
+        db.session.commit()
+
+    def update(self, username, email, password, first_name, last_name, role):
         self.username = username
         self.email = email
         self.password = password
-        self.firstName = firstName
-        self.lastName = lastName
+        self.first_name = first_name
+        self.last_name = last_name
         self.role = role
         db.session.commit()
 

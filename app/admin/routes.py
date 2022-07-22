@@ -66,7 +66,6 @@ class GetUser(Resource):
     @jwt_required()
     def get(self):
         id = get_jwt_identity()
-        print(id)
         user = User.query.filter_by(id=id).first()
         if user:
             return user.json()

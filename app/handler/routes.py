@@ -31,12 +31,12 @@ category_model = api.model('Category', {
     'name': fields.String
 })
 
-
 @api.route('/songs/new', methods=['POST'])
 class CreateSongs(Resource):
     @api.expect(song_model)
     @jwt_required()
     def post(self):
+        print(request.json)
         categories = []
         msg = request.json
         id=get_jwt_identity()
@@ -51,13 +51,11 @@ class CreateSongs(Resource):
         song.save()
         return {'Status': 'OK', 'message': msg}, 200
 
-
 @api.route('/songs/list', methods=['GET'])
 class ListSongs(Resource):
     def get(self):
         songs = Song.query.all()
         return {'Status': 'OK', 'songs': [song.json() for song in songs]}, 200
-
 
 @api.route('/songs/<int:id>', methods=['PUT'])
 class ListSongs(Resource):
@@ -69,7 +67,6 @@ class ListSongs(Resource):
             song.update(**request.json)
         return {'Status': 'OK', 'song': song.json() or []}, 200
 
-
 @api.route('/categories/new', methods=['POST'])
 class CreateCategories(Resource):
     @api.expect(category_model)
@@ -80,13 +77,11 @@ class CreateCategories(Resource):
         category.save()
         return {'Status': 'OK', 'category': category.json()}, 200
 
-
 @api.route('/categories/list', methods=['GET'])
 class ListCategories(Resource):
     def get(self):
         categories = Category.query.order_by(Category.name).all()
         return {'Status': 'OK', 'categories': [category.json() for category in categories]}, 200
-
 
 @api.route('/title/<title>', methods=['GET'])
 class GetSongByTitle(Resource):
@@ -100,7 +95,6 @@ class GetSongByTitle(Resource):
             return {'status': 'OK', 'songs': [song.json() for song in songs]}, 200
         else:
             return {'status': 'Error', 'songs': [], 'message': 'Song not found'}
-
 
 @api.route('/artist/<artist>', methods=['GET'])
 class GetSongsByArtist(Resource):
@@ -116,7 +110,6 @@ class GetSongsByArtist(Resource):
         else:
             return {'status': 'Error', 'message': 'No songs found'}, 404
 
-
 @api.route('/category/<category_slug>', methods=['GET'])
 class GetSongsByCategory(Resource):
     def get(self, category_slug):
@@ -127,7 +120,6 @@ class GetSongsByCategory(Resource):
             return {'status': 'OK', 'name': name, 'songs': [song.json() for song in songs]}, 200
         else:
             return {'status': 'Error', 'songs': [], 'message': 'Not found'}, 404
-
 
 @api.route('/<artist>/<title>', methods=['GET'])
 class GetSongByTitleAndArtist(Resource):
@@ -149,7 +141,6 @@ class GetSongByTitleAndArtist(Resource):
         else:
             return {'status': 'Error', 'song': [], 'message': 'Song not found'}, 404
 
-
 @api.route('/artist/list', methods=['GET'])
 class GetSongByTitleAndArtist(Resource):
     def get(self):
@@ -159,7 +150,6 @@ class GetSongByTitleAndArtist(Resource):
             return {'status': 'OK', 'artists': list(artists)}, 200
         else:
             return {'status': 'Error', 'artists': [], 'message': 'Song not found'}, 404
-
 
 @api.route('/<query_string>', methods=['GET'])
 class GetSongByGenericSearch(Resource):
